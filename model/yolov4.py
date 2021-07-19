@@ -5,11 +5,10 @@ import torch.nn.functional as F
 from inspect import isfunction
 
 
-
 class Module(nn.Module):
 
-    func2class ={}
-    
+    func2class = {}
+
     def __init__(self, *l, **d):
         super().__init__()
 
@@ -19,7 +18,7 @@ class Module(nn.Module):
             if isinstance(value, list) and "_" not in key[:1]:
                 seq = self._list2seq(value)
                 setattr(self, key, seq)
-                
+
     def _list2seq(self, s0):
 
         s = []
@@ -39,8 +38,8 @@ class Module(nn.Module):
                 if i.__name__ not in Module.func2class:
                     _funci = i  # 用i会和全局的i冲突
                     M = type(i.__name__, (nn.Module,), {
-                         "forward": lambda self, x: _funci(x)})
-                    Module.func2class[i.__name__]= M
+                        "forward": lambda self, x: _funci(x)})
+                    Module.func2class[i.__name__] = M
 
                 s.append(Module.func2class[i.__name__]())
 
@@ -80,11 +79,7 @@ def CBM1x1(i, o):
 
 
 def CBLDown(i, o):
-    return [
-        nn.Conv2d(i, o, 3, stride=2, padding=1),
-        nn.BatchNorm2d(o),
-        nn.LeakyReLU(0.1),
-    ]
+    return [nn.Conv2d(i, o, 3, stride=2, padding=1), nn.BatchNorm2d(o), nn.LeakyReLU(0.1)]
 
 
 def CBMDown(i, o):
@@ -271,6 +266,6 @@ class Yolov4(Module):
 if __name__ == "__main__":
 
     m = Yolov4()
-    from debug_function import *
+    from ymlib.debug_function import *
     modshow(m, (3, 608, 608))
     print()
