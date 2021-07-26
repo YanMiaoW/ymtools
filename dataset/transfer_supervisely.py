@@ -202,7 +202,8 @@ if __name__ == "__main__":
         )
     elif get_user_hostname() == ROOT_201_NAME:
         transfer_supervisely_to_common(
-            '/root/ym/data/OCHuman/annotations/ochuman.json',
-            '/root/ym/data/OCHuman/images',
-            '/root/ym/data-common/ochuman'
+            '/root/ym/data/hun_sha_di_pian/hun',
+            '/root/ym/data-common/hun_sha_di_pian'
+            # '/root/ym/data/HumanTest/humanTest'
+            # '/root/ym/data-common/humanTest'
         )
