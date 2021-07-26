@@ -19,9 +19,9 @@ if __name__ == '__main__':
 
         for obj in objs:
             # print(obj)
-            if 'sub_dict::body_keypoints' in obj:
-                obj['sub_dict::body_keypoints'] = obj['sub_dict::body_keypoints']
-                del obj['sub_dict::body_keypoints']
+            if 'sub_dict::body_keypoint' in obj:
+                obj['sub_dict::body_keypoints'] = obj['sub_dict::body_keypoint']
+                del obj['sub_dict::body_keypoint']
 
         ann_json = json.dumps(ann)
         with open(filepath, 'w') as f:
