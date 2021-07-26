@@ -14,25 +14,19 @@ def get_body_keypoints(kpt):
     npart = kpt.shape[0]
 
     if npart == 17:  # coco
-        part_names = ['nose',
-                      'left_eye', 'right_eye', 'left_ear', 'right_ear',
-                      'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
-                      'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
-                      'left_knee', 'right_knee', 'left_ankle', 'right_ankle']
+        part_names = [
+            'nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear', 'left_shoulder', 'right_shoulder', 'left_elbow',
+            'right_elbow', 'left_wrist', 'right_wrist', 'left_hip', 'right_hip', 'left_knee', 'right_knee', 'left_ankle',
+            'right_ankle'
+        ]
         # visible_map = {1: 'vis',
         #               2: 'not_vis',
         #               3: 'missing'}
-        visible_map = {2: 'vis',
-                       1: 'not_vis',
-                       0: 'missing'}
+        visible_map = {2: 'vis', 1: 'not_vis', 0: 'missing'}
         map_visible = {value: key for key, value in visible_map.items()}
         # if connection is None:
-        connection = [[16, 14], [14, 12], [17, 15],
-                      [15, 13], [12, 13], [6, 12],
-                      [7, 13], [6, 7], [6, 8],
-                      [7, 9], [8, 10], [9, 11],
-                      [2, 3], [1, 2], [1, 3],
-                      [2, 4], [3, 5], [4, 6], [5, 7]]
+        connection = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8], [7, 9], [8, 10],
+                      [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7]]
     elif npart == 19:  # ochuman
         part_names = ["right_shoulder", "right_elbow", "right_wrist",
                       "left_shoulder", "left_elbow", "left_wrist",
@@ -41,26 +35,15 @@ def get_body_keypoints(kpt):
                       "head", "neck"] + \
             ['right_ear', 'left_ear', 'nose', 'right_eye', 'left_eye']
 
-        visible_map = {0: 'missing',
-                       1: 'vis',
-                       2: 'self_occluded',
-                       3: 'others_occluded'}
+        visible_map = {0: 'missing', 1: 'vis', 2: 'self_occluded', 3: 'others_occluded'}
 
         map_visible = {value: key for key, value in visible_map.items()}
-        connection = [[16, 19], [13, 17], [4, 5],
-                      [19, 17], [17, 14], [5, 6],
-                      [17, 18], [14, 4], [1, 2],
-                      [18, 15], [14, 1], [2, 3],
-                      [4, 10], [1, 7], [10, 7],
-                      [10, 11], [7, 8], [11, 12], [8, 9],
-                      [16, 4], [15, 1]]  # TODO
+        connection = [[16, 19], [13, 17], [4, 5], [19, 17], [17, 14], [5, 6], [17, 18], [14, 4], [1, 2], [18, 15], [14, 1],
+                      [2, 3], [4, 10], [1, 7], [10, 7], [10, 11], [7, 8], [11, 12], [8, 9], [16, 4], [15, 1]]  # TODO
 
-    colors = [[255, 0, 0], [255, 85, 0], [255, 170, 0],
-              [255, 255, 0], [170, 255, 0], [85, 255, 0],
-              [0, 255, 0], [0, 255, 85], [0, 255, 170],
-              [0, 255, 255], [0, 170, 255], [0, 85, 255],
-              [0, 0, 255], [85, 0, 255], [170, 0, 255],
-              [255, 0, 255], [255, 0, 170], [255, 0, 85]]
+    colors = [[255, 0, 0], [255, 85, 0], [255, 170, 0], [255, 255, 0], [170, 255, 0], [85, 255, 0], [0, 255, 0], [0, 255, 85],
+              [0, 255, 170], [0, 255, 255], [0, 170, 255], [0, 85, 255], [0, 0, 255], [85, 0, 255], [170, 0, 255], [255, 0, 255],
+              [255, 0, 170], [255, 0, 85]]
 
     body_poses = {}
 
@@ -71,12 +54,7 @@ def get_body_keypoints(kpt):
 
         one_key = {}
         if len(part_names) == 19:
-            key_map = {
-                0: 'missing',
-                1: 'vis',
-                2: 'not_vis',
-                3: 'not_vis'
-            }
+            key_map = {0: 'missing', 1: 'vis', 2: 'not_vis', 3: 'not_vis'}
         else:
             key_map = {
                 0: 'missing',
@@ -94,13 +72,7 @@ def get_body_keypoints(kpt):
 
 def transfer_coco(img_dir, ann_path, save_dir):
 
-    colors = [
-        [255, 0, 0],
-        [255, 255, 0],
-        [0, 255, 0],
-        [0, 255, 255],
-        [0, 0, 255],
-        [255, 0, 255]]
+    colors = [[255, 0, 0], [255, 255, 0], [0, 255, 0], [0, 255, 255], [0, 0, 255], [255, 0, 255]]
 
     from pycocotools.coco import COCO
 
@@ -130,8 +102,10 @@ def transfer_coco(img_dir, ann_path, save_dir):
         mix_dir = os.path.join(save_dir, 'mix')
         data_dir = os.path.join(save_dir, 'data')
 
-        for dir in [save_dir, save_image_dir, instance_dir, segment_mask_dir,
-                    class_mask_dir, class_mask_name_dir, mix_dir, data_dir, instance_name_dir]:
+        for dir in [
+                save_dir, save_image_dir, instance_dir, segment_mask_dir, class_mask_dir, class_mask_name_dir, mix_dir, data_dir,
+                instance_name_dir
+        ]:
             if not os.path.exists(dir):
                 os.mkdir(dir)
 
@@ -139,8 +113,7 @@ def transfer_coco(img_dir, ann_path, save_dir):
         save_image_path = os.path.join(save_image_dir, filename)
 
         copyfile(load_image_path, save_image_path)
-        nd[key_combine('image', 'image_path')] = os.path.join(
-            'image', filename)
+        nd[key_combine('image', 'image_path')] = os.path.join('image', filename)
 
         img = cv.imread(load_image_path)
         meta['origin_image_path'] = load_image_path
@@ -169,31 +142,25 @@ def transfer_coco(img_dir, ann_path, save_dir):
             kpt = anno['keypoints']
             segm = anno['segmentation']
 
-            bbox = [int(bbox[0]), int(bbox[1]), int(
-                bbox[0]+1+bbox[2]), int(bbox[1]+1+bbox[3])]
+            bbox = [int(bbox[0]), int(bbox[1]), int(bbox[0] + 1 + bbox[2]), int(bbox[1] + 1 + bbox[3])]
 
             obj[key_combine('box', 'box_xyxy')] = bbox
             obj[key_combine('class', 'class')] = class_name
 
-            img_show = vistool.draw_bbox(
-                img_show, bbox, thickness=2, color=colors[i0 % len(colors)])
+            img_show = vistool.draw_bbox(img_show, bbox, thickness=2, color=colors[i0 % len(colors)])
 
             if segm is not None:
-                instance_mask = (coco.annToMask(anno)*255).astype(np.uint8)
+                instance_mask = (coco.annToMask(anno) * 255).astype(np.uint8)
 
                 segment_mask |= instance_mask
 
-                cv.imwrite(os.path.join(
-                    instance_name_dir, str(i0)+'.png'), instance_mask)
-                obj[key_combine('instance_mask', 'mask_path')] = os.path.join(
-                    'instance_mask', name, str(i0)+'.png')
+                cv.imwrite(os.path.join(instance_name_dir, str(i0) + '.png'), instance_mask)
+                obj[key_combine('instance_mask', 'mask_path')] = os.path.join('instance_mask', name, str(i0) + '.png')
 
-                img_show = vistool.draw_mask(
-                    img_show, instance_mask, thickness=3, color=colors[i0 % len(colors)])
+                img_show = vistool.draw_mask(img_show, instance_mask, thickness=3, color=colors[i0 % len(colors)])
 
             if kpt is not None:
-                img_show = vistool.draw_skeleton(
-                    img_show, kpt, connection=None, colors=colors[i0 % len(colors)], bbox=bbox)
+                img_show = vistool.draw_skeleton(img_show, kpt, connection=None, colors=colors[i0 % len(colors)], bbox=bbox)
 
                 body_keypoints = get_body_keypoints(kpt)
 
@@ -204,28 +171,23 @@ def transfer_coco(img_dir, ann_path, save_dir):
         cv.imwrite(os.path.join(mix_dir, filename), img_show)
         nd[key_combine('mix', 'image_path')] = os.path.join('mix', filename)
 
-        cv.imwrite(os.path.join(segment_mask_dir, name+'.png'), segment_mask)
-        nd[key_combine('segment_mask', 'mask_path')] = os.path.join(
-            'segment_mask', name+'.png')
+        cv.imwrite(os.path.join(segment_mask_dir, name + '.png'), segment_mask)
+        nd[key_combine('segment_mask', 'mask_path')] = os.path.join('segment_mask', name + '.png')
 
-        copyfile(os.path.join(segment_mask_dir, name+'.png'),
-                 os.path.join(class_mask_dir, name, 'person.png'))
+        copyfile(os.path.join(segment_mask_dir, name + '.png'), os.path.join(class_mask_dir, name, 'person.png'))
 
         class_masks = []
         class_mask = {}
         class_mask[key_combine('class', 'class')] = 'person'
-        class_mask[key_combine('segment_mask', 'mask_path')] = os.path.join(
-            'class_mask', name, 'person.png')
+        class_mask[key_combine('segment_mask', 'mask_path')] = os.path.join('class_mask', name, 'person.png')
         class_masks.append(class_mask)
         nd[key_combine('class_mask', 'sub_list')] = class_masks
 
         nd[key_combine('object', 'sub_list')] = objs
 
         nd_json = json.dumps(nd)
-        with open(os.path.join(data_dir, name+'.json'), 'w') as f:
+        with open(os.path.join(data_dir, name + '.json'), 'w') as f:
             f.write(nd_json)
-
-
 
 
 if __name__ == '__main__':
@@ -233,14 +195,9 @@ if __name__ == '__main__':
     from ymlib.common import get_user_hostname
 
     if get_user_hostname() == YANMIAO_MACPRO_NAME:
-        transfer_coco(
-            '/Users/yanmiao/yanmiao/data/coco/val2017',
-            '/Users/yanmiao/yanmiao/data/coco/annotations/person_keypoints_val2017.json',
-            '/Users/yanmiao/yanmiao/data-common/coco'
-        )
+        transfer_coco('/Users/yanmiao/yanmiao/data/coco/val2017',
+                      '/Users/yanmiao/yanmiao/data/coco/annotations/person_keypoints_val2017.json',
+                      '/Users/yanmiao/yanmiao/data-common/coco')
     elif get_user_hostname() == ROOT_201_NAME:
-        transfer_coco(
-            '/root/ym/data/coco2017/train2017',
-            '/root/ym/data/coco2017/annotations/person_keypoints_train2017.json',
-            '/root/ym/data-common/coco'
-        )
+        transfer_coco('/root/ym/data/coco2017/train2017', '/root/ym/data/coco2017/annotations/person_keypoints_train2017.json',
+                      '/root/ym/data-common/coco')

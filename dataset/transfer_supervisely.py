@@ -26,13 +26,12 @@ def transfer_supervisely_to_common(data_dir, save_dir):
             with open(item_paths.ann_path, 'r') as f:
                 sann_json = json.load(f)
 
-            sann = sly.Annotation.load_json_file(
-                item_paths.ann_path, project.meta)
+            sann = sly.Annotation.load_json_file(item_paths.ann_path, project.meta)
 
             for label in sann.labels:
                 if label.obj_class.name not in [
-                    'person_poly', 'person_bmp', 'neutral', 'persona',
-                        *list(BODY_PART_CHOICES), *list(CLASS)]:
+                        'person_poly', 'person_bmp', 'neutral', 'persona', *list(BODY_PART_CHOICES), *list(CLASS)
+                ]:
                     print(label.obj_class.name)
                     assert False, 'not support some obj class name'
 
@@ -73,8 +72,10 @@ def transfer_supervisely_to_common(data_dir, save_dir):
             mix_dir = os.path.join(save_dir, 'mix')
             data_dir = os.path.join(save_dir, 'data')
 
-            for dir in [save_dir, image_dir, instance_dir, segment_mask_dir,
-                        class_mask_dir, class_mask_name_dir, mix_dir, data_dir, instance_name_dir]:
+            for dir in [
+                    save_dir, image_dir, instance_dir, segment_mask_dir, class_mask_dir, class_mask_name_dir, mix_dir, data_dir,
+                    instance_name_dir
+            ]:
                 if not os.path.exists(dir):
                     os.mkdir(dir)
 
@@ -84,7 +85,7 @@ def transfer_supervisely_to_common(data_dir, save_dir):
             meta['width'] = w
             meta['height'] = h
 
-            image_path = os.path.join("image", name+'.png')
+            image_path = os.path.join("image", name + '.png')
             cv.imwrite(os.path.join(save_dir, image_path), img)
 
             ann[key_combine('image', 'image_path')] = image_path
@@ -107,8 +108,7 @@ def transfer_supervisely_to_common(data_dir, save_dir):
                 if instance_id not in objs:
                     objs[instance_id] = {}
                     objs[instance_id]['masks'] = []
-                    objs[instance_id][key_combine(
-                        'body_keypoints', 'sub_dict')] = {}
+                    objs[instance_id][key_combine('body_keypoints', 'sub_dict')] = {}
 
                 if c in BODY_PART_CHOICES:
                     xy = obj_json['points']['exterior'][0]
@@ -116,8 +116,7 @@ def transfer_supervisely_to_common(data_dir, save_dir):
                     keypoint[key_combine('status', 'keypoint_status')] = 'vis'
                     keypoint[key_combine('point', 'point_xy')] = xy
 
-                    objs[instance_id][key_combine(
-                        'body_keypoints', 'sub_dict')][key_combine(c, 'sub_dict')] = keypoint
+                    objs[instance_id][key_combine('body_keypoints', 'sub_dict')][key_combine(c, 'sub_dict')] = keypoint
 
                 if c in CLASS:
                     obj = objs[instance_id]
@@ -135,51 +134,43 @@ def transfer_supervisely_to_common(data_dir, save_dir):
 
                 masks = obj['masks']
 
-                instance_mask = reduce(
-                    lambda mask1, mask2: mask1 | mask2, masks)
+                instance_mask = reduce(lambda mask1, mask2: mask1 | mask2, masks)
 
                 x0, y0, x1, y1 = mask2box(instance_mask)
 
-                instance_path = os.path.join(
-                    'instance_mask', name, str(j0)+'.png')
+                instance_path = os.path.join('instance_mask', name, str(j0) + '.png')
                 j0 += 1
-                cv.imwrite(os.path.join(
-                    save_dir, instance_path), instance_mask)
+                cv.imwrite(os.path.join(save_dir, instance_path), instance_mask)
 
-                obj[key_combine('instance_mask', 'mask_path')
-                    ] = instance_path
+                obj[key_combine('instance_mask', 'mask_path')] = instance_path
                 obj[key_combine('box', 'box_xyxy')] = [x0, y0, x1, y1]
 
-                cv.rectangle(mix, (int(x0), int(y0)),
-                             (int(x1 + 1), int(y1 + 1)), (0, 255, 0), 1)
+                cv.rectangle(mix, (int(x0), int(y0)), (int(x1 + 1), int(y1 + 1)), (0, 255, 0), 1)
 
                 del obj['masks']
 
-            segment_mask_path = os.path.join('segment_mask', name+'.png')
+            segment_mask_path = os.path.join('segment_mask', name + '.png')
             cv.imwrite(os.path.join(save_dir, segment_mask_path), segment_mask)
 
-            mix_path = os.path.join('mix', name+'.png')
+            mix_path = os.path.join('mix', name + '.png')
             cv.imwrite(os.path.join(save_dir, mix_path), mix)
             ann[key_combine('mix', 'image_path')] = mix_path
 
             ann[key_combine('segment_mask', 'mask_path')] = segment_mask_path
 
-            class_mask_path = os.path.join(
-                'class_mask', name, seg_class_name+'.png')
-            copyfile(os.path.join(save_dir, segment_mask_path),
-                     os.path.join(save_dir, class_mask_path))
+            class_mask_path = os.path.join('class_mask', name, seg_class_name + '.png')
+            copyfile(os.path.join(save_dir, segment_mask_path), os.path.join(save_dir, class_mask_path))
 
             cls_mask[key_combine('class', 'class')] = seg_class_name
 
-            cls_mask[key_combine('segment_mask', 'mask_path')
-                     ] = class_mask_path
+            cls_mask[key_combine('segment_mask', 'mask_path')] = class_mask_path
 
             cls_masks.append(cls_mask)
             ann[key_combine('class_mask', 'sub_list')] = cls_masks
             ann[key_combine('meta', 'other')] = meta
             ann[key_combine('object', 'sub_list')] = list(objs.values())
 
-            data_path = os.path.join('data', name+'.json')
+            data_path = os.path.join('data', name + '.json')
             ann_json = json.dumps(ann)
             with open(os.path.join(save_dir, data_path), 'w') as f:
                 f.write(ann_json)
@@ -195,15 +186,12 @@ if __name__ == "__main__":
     from ymlib.common import get_user_hostname
     if get_user_hostname() == YANMIAO_MACPRO_NAME:
         transfer_supervisely_to_common(
-            '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest',
-            '/Users/yanmiao/yanmiao/data-common/humanTest'
+            '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest', '/Users/yanmiao/yanmiao/data-common/humanTest'
             # '/Users/yanmiao/yanmiao/data/hun_sha_di_pian/addkeypoint/hun',
             # '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
         )
     elif get_user_hostname() == ROOT_201_NAME:
-        transfer_supervisely_to_common(
-            '/root/ym/data/hun_sha_di_pian/hun',
-            '/root/ym/data-common/hun_sha_di_pian'
-            # '/root/ym/data/HumanTest/humanTest'
-            # '/root/ym/data-common/humanTest'
-        )
+        transfer_supervisely_to_common('/root/ym/data/hun_sha_di_pian/hun', '/root/ym/data-common/hun_sha_di_pian'
+                                       # '/root/ym/data/HumanTest/humanTest'
+                                       # '/root/ym/data-common/humanTest'
+                                       )

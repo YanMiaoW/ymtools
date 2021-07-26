@@ -11,8 +11,7 @@ def show_dataset(dataset_dir):
     aug = iaa.Noop()
 
     for ann in common_ann_loader(dataset_dir):
-        common_choice(ann, key_choices={
-                      'image', 'mix', 'segment_mask', 'meta', 'object'})
+        common_choice(ann, key_choices={'image', 'mix', 'segment_mask', 'meta', 'object'})
 
         def filter(result):
             yield True
@@ -26,8 +25,7 @@ def show_dataset(dataset_dir):
         common_aug(ann, aug)
 
         image = ann[key_combine('image', 'image')]
-        origin_image_path = ann[key_combine(
-            'meta', 'other')]['origin_image_path']
+        origin_image_path = ann[key_combine('meta', 'other')]['origin_image_path']
 
         h, w = image.shape[:2]
         window_name = f'image | mix | mask   height:{h} width:{w} origin:{origin_image_path}  time:{int((time.time() - start)*1000)}'
