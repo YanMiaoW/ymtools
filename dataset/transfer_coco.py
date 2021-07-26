@@ -112,6 +112,9 @@ def transfer_coco(img_dir, ann_path, save_dir):
         load_image_path = os.path.join(img_dir, filename)
         save_image_path = os.path.join(save_image_dir, filename)
 
+        if os.path.exists(os.path.join(data_dir, name + '.json')):
+            continue
+
         copyfile(load_image_path, save_image_path)
         nd[key_combine('image', 'image_path')] = os.path.join('image', filename)
 
