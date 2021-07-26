@@ -1,5 +1,6 @@
 from ymlib.common_dataset_api import common_ann_loader, common_aug, common_choice, common_filter, common_transfer, key_combine
-from ymlib.dataset_visual import mask2box, draw_box, draw_keypoint, draw_mask, draw_label, index2color
+from ymlib.dataset_visual import draw_box, draw_keypoint, draw_mask, draw_label, index2color
+from ymlib.dataset_util import mask2box
 import imgaug as ia
 from imgaug import augmenters as iaa
 import cv2 as cv
@@ -46,18 +47,19 @@ def show_dataset(dataset_dir):
                 body_keypoints = obj[key_combine('body_keypoints', 'sub_dict')]
                 draw_keypoint(mix, body_keypoints, labeled=True)
 
-            instance_mask = obj[key_combine('instance_mask', 'mask')]
+            if key_combine('instance_mask', 'mask') in obj:
+                instance_mask = obj[key_combine('instance_mask', 'mask')]
 
-            draw_mask(mix, instance_mask, color=index2color(j0, len(objs)))
+                draw_mask(mix, instance_mask, color=index2color(j0, len(objs)))
 
         imshow(np.concatenate([image, mix, mask], axis=1), window_name)
 
 
 if __name__ == '__main__':
 
-    dataset_dir = '/Users/yanmiao/yanmiao/data-common/humanTest'
+    # dataset_dir = '/Users/yanmiao/yanmiao/data-common/humanTest'
     # dataset_dir = '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
-    # dataset_dir = '/Users/yanmiao/yanmiao/data-common/ochuman'
+    dataset_dir = '/Users/yanmiao/yanmiao/data-common/ochuman'
     # dataset_dir = '/Users/yanmiao/yanmiao/data-common/supervisely'
     # dataset_dir = '/Users/yanmiao/yanmiao/data-common/coco'
 
