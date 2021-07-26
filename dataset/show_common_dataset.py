@@ -44,9 +44,9 @@ def show_dataset(dataset_dir):
 
         for j0, obj in enumerate(objs):
             common_transfer(obj)
-            if key_combine('body_keypoint', 'sub_dict') in obj:
-                body_keypoint = obj[key_combine('body_keypoint', 'sub_dict')]
-                draw_keypoint(mix, body_keypoint, labeled=True)
+            if key_combine('body_keypoints', 'sub_dict') in obj:
+                body_keypoints = obj[key_combine('body_keypoints', 'sub_dict')]
+                draw_keypoint(mix, body_keypoints, labeled=True)
 
             instance_mask = obj[key_combine('instance_mask', 'mask')]
 

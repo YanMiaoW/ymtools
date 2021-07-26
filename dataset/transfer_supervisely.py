@@ -5,7 +5,7 @@ import tqdm
 import numpy as np
 from functools import reduce
 from ymlib.common_dataset_api import key_combine, BODY_PART_CHOICES, CLASS
-from ymlib.dataset_visual import mask2box
+from ymlib.dataset_util import mask2box
 from shutil import copyfile
 
 
@@ -108,7 +108,7 @@ def transfer_supervisely_to_common(data_dir, save_dir):
                     objs[instance_id] = {}
                     objs[instance_id]['masks'] = []
                     objs[instance_id][key_combine(
-                        'body_keypoint', 'sub_dict')] = {}
+                        'body_keypoints', 'sub_dict')] = {}
 
                 if c in BODY_PART_CHOICES:
                     xy = obj_json['points']['exterior'][0]
@@ -117,7 +117,7 @@ def transfer_supervisely_to_common(data_dir, save_dir):
                     keypoint[key_combine('point', 'point_xy')] = xy
 
                     objs[instance_id][key_combine(
-                        'body_keypoint', 'sub_dict')][key_combine(c, 'sub_dict')] = keypoint
+                        'body_keypoints', 'sub_dict')][key_combine(c, 'sub_dict')] = keypoint
 
                 if c in CLASS:
                     obj = objs[instance_id]
@@ -143,7 +143,8 @@ def transfer_supervisely_to_common(data_dir, save_dir):
                 instance_path = os.path.join(
                     'instance_mask', name, str(j0)+'.png')
                 j0 += 1
-                cv.imwrite(os.path.join(save_dir, instance_path), instance_mask)
+                cv.imwrite(os.path.join(
+                    save_dir, instance_path), instance_mask)
 
                 obj[key_combine('instance_mask', 'mask_path')
                     ] = instance_path
@@ -191,9 +192,17 @@ def transfer_supervisely_to_common(data_dir, save_dir):
 if __name__ == "__main__":
     # 示例
     from ymlib.debug_function import *
-    transfer_supervisely_to_common(
-        '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest',
-        '/Users/yanmiao/yanmiao/data-common/humanTest'
-        # '/Users/yanmiao/yanmiao/data/hun_sha_di_pian/addkeypoint/hun',
-        # '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
-    )
+    from ymlib.common import get_user_hostname
+    if get_user_hostname() == YANMIAO_MACPRO_NAME:
+        transfer_supervisely_to_common(
+            '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest',
+            '/Users/yanmiao/yanmiao/data-common/humanTest'
+            # '/Users/yanmiao/yanmiao/data/hun_sha_di_pian/addkeypoint/hun',
+            # '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
+        )
+    elif get_user_hostname() == ROOT_201_NAME:
+        transfer_supervisely_to_common(
+            '/root/ym/data/OCHuman/annotations/ochuman.json',
+            '/root/ym/data/OCHuman/images',
+            '/root/ym/data-common/ochuman'
+        )

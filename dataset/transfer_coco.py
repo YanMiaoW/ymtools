@@ -8,7 +8,7 @@ import ochumanApi.vis as vistool
 import tqdm
 
 
-def get_body_keypoint(kpt):
+def get_body_keypoints(kpt):
     kpt = np.array(kpt, dtype=np.int32).reshape(-1, 3)
     kpt = np.array(kpt)
     npart = kpt.shape[0]
@@ -62,7 +62,7 @@ def get_body_keypoint(kpt):
               [0, 0, 255], [85, 0, 255], [170, 0, 255],
               [255, 0, 255], [255, 0, 170], [255, 0, 85]]
 
-    body_keypoint = {}
+    body_poses = {}
 
     for i0, vs in enumerate(kpt):
         x, y, v = vs
@@ -87,9 +87,9 @@ def get_body_keypoint(kpt):
         one_key[key_combine('status', 'keypoint_status')] = key_map[v]
         one_key[key_combine('point', 'point_xy')] = [int(x), int(y)]
 
-        body_keypoint[key_combine(key, 'sub_dict')] = one_key
+        body_poses[key_combine(key, 'sub_dict')] = one_key
 
-    return body_keypoint
+    return body_poses
 
 
 def transfer_coco(img_dir, ann_path, save_dir):
@@ -195,9 +195,9 @@ def transfer_coco(img_dir, ann_path, save_dir):
                 img_show = vistool.draw_skeleton(
                     img_show, kpt, connection=None, colors=colors[i0 % len(colors)], bbox=bbox)
 
-                body_keypoint = get_body_keypoint(kpt)
+                body_keypoints = get_body_keypoints(kpt)
 
-                obj[key_combine('body_keypoint', 'sub_dict')] = body_keypoint
+                obj[key_combine('body_keypoints', 'sub_dict')] = body_keypoints
 
             objs.append(obj)
 
@@ -225,15 +225,22 @@ def transfer_coco(img_dir, ann_path, save_dir):
         with open(os.path.join(data_dir, name+'.json'), 'w') as f:
             f.write(nd_json)
 
-        pass
 
-    print(catIds)
 
 
 if __name__ == '__main__':
     from ymlib.debug_function import *
-    transfer_coco(
-        '/Users/yanmiao/yanmiao/data/coco/val2017',
-        '/Users/yanmiao/yanmiao/data/coco/annotations/person_keypoints_val2017.json',
-        '/Users/yanmiao/yanmiao/data-common/coco'
-    )
+    from ymlib.common import get_user_hostname
+
+    if get_user_hostname() == YANMIAO_MACPRO_NAME:
+        transfer_coco(
+            '/Users/yanmiao/yanmiao/data/coco/val2017',
+            '/Users/yanmiao/yanmiao/data/coco/annotations/person_keypoints_val2017.json',
+            '/Users/yanmiao/yanmiao/data-common/coco'
+        )
+    elif get_user_hostname() == ROOT_201_NAME:
+        transfer_coco(
+            '/root/ym/data/coco2017/train2017',
+            '/root/ym/data/coco2017/annotations/person_keypoints_train2017.json',
+            '/root/ym/data-common/coco'
+        )

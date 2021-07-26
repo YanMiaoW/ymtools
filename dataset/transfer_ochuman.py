@@ -3,7 +3,7 @@ import numpy as np
 import tqdm
 from shutil import copyfile
 from ochumanApi.ochuman import OCHuman
-from dataset.common_dataset_api import key_combine, BODY_PART_CHOICES
+from ymlib.common_dataset_api import key_combine, BODY_PART_CHOICES
 import ochumanApi.vis as vistool
 from ochumanApi.ochuman import Poly2Mask
 import json
@@ -18,7 +18,7 @@ def path_decompose(path):
     return dirname, basename, ext
 
 
-def get_body_keypoint(kpt):
+def get_body_keypoints(kpt):
     kpt = np.array(kpt, dtype=np.int32).reshape(-1, 3)
     kpt = np.array(kpt)
     npart = kpt.shape[0]
@@ -72,7 +72,7 @@ def get_body_keypoint(kpt):
               [0, 0, 255], [85, 0, 255], [170, 0, 255],
               [255, 0, 255], [255, 0, 170], [255, 0, 85]]
 
-    body_keypoint = {}
+    body_keypoints = {}
 
     for i0, vs in enumerate(kpt):
         x, y, v = vs
@@ -97,9 +97,9 @@ def get_body_keypoint(kpt):
         one_key[key_combine('status', 'keypoint_status')] = key_map[v]
         one_key[key_combine('point', 'point_xy')] = [int(x), int(y)]
 
-        body_keypoint[key_combine(key, 'sub_dict')] = one_key
+        body_keypoints[key_combine(key, 'sub_dict')] = one_key
 
-    return body_keypoint
+    return body_keypoints
 
 
 def transfer_ochuman(ann_path, img_dir, save_dir):
@@ -192,9 +192,9 @@ def transfer_ochuman(ann_path, img_dir, save_dir):
                 img_show = vistool.draw_skeleton(
                     img_show, kpt, connection=None, colors=colors[i0 % len(colors)], bbox=bbox)
 
-                body_keypoint = get_body_keypoint(kpt)
+                body_keypoints = get_body_keypoints(kpt)
 
-                obj[key_combine('body_keypoint', 'sub_dict')] = body_keypoint
+                obj[key_combine('body_keypoints', 'sub_dict')] = body_keypoints
 
             objs.append(obj)
 
@@ -228,7 +228,13 @@ def transfer_ochuman(ann_path, img_dir, save_dir):
 
 
 if __name__ == '__main__':
-    from debug_function import *
-    transfer_ochuman('/Users/yanmiao/yanmiao/data/ochuman/annotations/ochuman.json',
-                     '/Users/yanmiao/yanmiao/data/ochuman/images',
-                     '/Users/yanmiao/yanmiao/data-common/ochuman')
+    from ymlib.debug_function import *
+    from ymlib.common import get_user_hostname
+    if get_user_hostname() == YANMIAO_MACPRO_NAME:
+        transfer_ochuman('/Users/yanmiao/yanmiao/data/ochuman/annotations/ochuman.json',
+                         '/Users/yanmiao/yanmiao/data/ochuman/images',
+                         '/Users/yanmiao/yanmiao/data-common/ochuman')
+    elif get_user_hostname() == ROOT_201_NAME:
+        transfer_ochuman('/root/ym/data/OCHuman/annotations/ochuman.json',
+                         '/root/ym/data/OCHuman/images',
+                         '/root/ym/data-common/ochuman')
