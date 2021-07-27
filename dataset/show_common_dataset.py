@@ -55,6 +55,7 @@ def show_dataset(dataset_dir):
         imshow(np.concatenate([image, mix, mask], axis=1), window_name)
 
 
+
 if __name__ == '__main__':
 
     # dataset_dir = '/Users/yanmiao/yanmiao/data-common/humanTest'

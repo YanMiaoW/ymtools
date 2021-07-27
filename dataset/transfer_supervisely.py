@@ -186,9 +186,9 @@ if __name__ == "__main__":
     from ymlib.common import get_user_hostname
     if get_user_hostname() == YANMIAO_MACPRO_NAME:
         transfer_supervisely_to_common(
-            '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest', '/Users/yanmiao/yanmiao/data-common/humanTest'
-            # '/Users/yanmiao/yanmiao/data/hun_sha_di_pian/addkeypoint/hun',
-            # '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
+            # '/Users/yanmiao/yanmiao/data/HumanTest/addkeypointMask/humanTest', '/Users/yanmiao/yanmiao/data-common/humanTest'
+            '/Users/yanmiao/yanmiao/data/hun_sha_di_pian/addkeypoint/hun',
+            '/Users/yanmiao/yanmiao/data-common/hun_sha_di_pian'
         )
     elif get_user_hostname() == ROOT_201_NAME:
         transfer_supervisely_to_common('/root/ym/data/hun_sha_di_pian/hun', '/root/ym/data-common/hun_sha_di_pian'
