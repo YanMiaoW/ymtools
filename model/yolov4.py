@@ -1,8 +1,6 @@
-from typing import OrderedDict
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from inspect import isfunction
 from ymlib.model import Module
 
 def mish(x):
